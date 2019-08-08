@@ -6,7 +6,6 @@ import com.gaga.exception.MyException;
 import com.gaga.exception.RemoteException;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +21,7 @@ public class Protocol {
     }
 
     private static Object read(MyFilterInputStream is) throws MyException {
-        return process(is);
+        return readProcess(is);
     }
 
     public static Command readCommand(MyFilterInputStream is) throws MyException, InstantiationException, IllegalAccessException {
@@ -32,20 +31,20 @@ public class Protocol {
     }
 
 
-    public static List<Object> processArray(MyFilterInputStream is) throws MyException {
+    public static List<Object> readArray(MyFilterInputStream is) throws MyException {
         int len = (int) readInteger(is);
         if (len == -1) {
             return null;
         }
         List<Object> list = new ArrayList<Object>(len);
         for (int i = 0; i < len; i++) {
-            list.add(process(is));
+            list.add(readProcess(is));
         }
         return list;
 
     }
 
-    public static byte[] processBulkString(MyFilterInputStream is) throws MyException {
+    public static byte[] readBulkString(MyFilterInputStream is) throws MyException {
         int len = (int) readInteger(is);
         if (len == -1) {
             throw new RuntimeException("not -1");
@@ -68,19 +67,19 @@ public class Protocol {
         return bytes;
     }
 
-    public static long processInteger(MyFilterInputStream is) throws MyException {
+    public static long readIntegers(MyFilterInputStream is) throws MyException {
         return readInteger(is);
     }
 
-    public static String processERR(MyFilterInputStream is) throws MyException {
+    public static String readERR(MyFilterInputStream is) throws MyException {
         return readLine(is);
     }
 
-    public static String processString(MyFilterInputStream is) throws MyException {
+    public static String readString(MyFilterInputStream is) throws MyException {
         return readLine(is);
     }
 
-    public static Object process(MyFilterInputStream is) throws MyException {
+    public static Object readProcess(MyFilterInputStream is) throws MyException {
         int start = 0;
         try {
             start = is.read();
@@ -89,20 +88,108 @@ public class Protocol {
         }
         switch (start) {
             case '+':
-                return processString(is);
+                return readString(is);
             case '-':
-                throw new RuntimeException(processERR(is));
+                throw new RuntimeException(readERR(is));
             case ':':
-                return processInteger(is);
+                return readIntegers(is);
             case '$':
-                return processBulkString(is);
+                return readBulkString(is);
             case '*':
-                return processArray(is);
+                return readArray(is);
             default:
                 throw new RuntimeException("不支持的类型");
         }
     }
 
+
+    public static void writeString(MyFilterOutputSteam out,String str){
+        try {
+            out.write('+');
+            out.write(str.getBytes(charset()));
+            out.writeCRLF();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeError(MyFilterOutputSteam out, String err){
+        try {
+            out.write('-');
+            out.write(err.getBytes(charset()));
+            out.writeCRLF();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeIntegers(MyFilterOutputSteam out, long value){
+        try {
+            out.write(':');
+            out.writeInteger(value);
+            out.writeCRLF();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+//    public static void writeBulkString(MyFilterOutputSteam out,String str){
+//        writeBulkString(out,str.getBytes(charset()));
+//    }
+    public static void writeBulkString(MyFilterOutputSteam out,byte[] bytes){
+        try {
+            out.write('$');
+            out.writeInteger(bytes.length);
+            out.writeCRLF();
+            out.write(bytes);
+            out.writeCRLF();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeArray(MyFilterOutputSteam out,List<?> list){
+        try {
+            out.write('*');
+            out.writeInteger(list.size());
+            out.writeCRLF();
+            for(Object o:list){
+
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeNull(MyFilterOutputSteam out){
+        try {
+            out.write('$');
+            out.writeInteger(-1);
+            out.writeCRLF();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void writeObject(MyFilterOutputSteam out,Object o) throws MyException {
+        if(o instanceof String){
+            writeString(out,(String)o);
+        }else if(o instanceof RemoteException){
+            writeError(out,((RemoteException) o).getMessage());
+        }else if(o instanceof Integer){
+            writeIntegers(out,((Integer) o).longValue());
+        }else if(o instanceof Long){
+            writeIntegers(out,(Long) o);
+        }else if(o instanceof byte[]){
+            writeBulkString(out,(byte[]) o);
+        }else if(o instanceof List){
+            writeArray(out,(List<?>) o);
+        }else if(o == null){
+            writeNull(out);
+        }else{
+            throw new MyException("写入了不识别的数据类型");
+        }
+    }
 
 
 }
