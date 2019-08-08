@@ -1,6 +1,5 @@
-package com.gaga.command;
-
-import com.gaga.DB.DataBase;
+package com.gaga.redis.command;
+import com.gaga.redis.DB.DataBase;
 
 import java.util.List;
 

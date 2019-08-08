@@ -1,4 +1,4 @@
-package com.gaga.exception;
+package com.gaga.redis.exception;
 
 public class MyException extends Exception {
     public MyException() {

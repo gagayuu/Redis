@@ -1,7 +1,7 @@
-package com.gaga.command;
+package com.gaga.redis.command;
 
-import com.gaga.exception.MyException;
-import com.gaga.protocol.Protocol;
+import com.gaga.redis.exception.MyException;
+import com.gaga.redis.protocol.Protocol;
 
 import java.util.List;
 

@@ -1,17 +1,18 @@
-package com.gaga.protocol;
+package com.gaga.redis.protocol;
 
-import com.gaga.command.Command;
-import com.gaga.command.CommandFactory;
-import com.gaga.exception.MyException;
-import com.gaga.exception.RemoteException;
+import com.gaga.redis.command.Command;
+import com.gaga.redis.command.CommandFactory;
+import com.gaga.redis.exception.MyException;
+import com.gaga.redis.exception.RemoteException;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.gaga.protocol.MyFilterInputStream.readInteger;
-import static com.gaga.protocol.MyFilterInputStream.readLine;
+import static com.gaga.redis.protocol.MyFilterInputStream.readInteger;
+import static com.gaga.redis.protocol.MyFilterInputStream.readLine;
+
 
 //协议解析
 public class Protocol {
@@ -133,7 +134,7 @@ public class Protocol {
         }
     }
 
-//    public static void writeBulkString(MyFilterOutputSteam out,String str){
+    //    public static void writeBulkString(MyFilterOutputSteam out,String str){
 //        writeBulkString(out,str.getBytes(charset()));
 //    }
     public static void writeBulkString(MyFilterOutputSteam out,byte[] bytes){

@@ -1,6 +1,6 @@
-package com.gaga.exception;
+package com.gaga.redis.exception;
 
-import com.gaga.exception.MyException;
+
 
 public class RemoteException extends MyException {
     public RemoteException() {

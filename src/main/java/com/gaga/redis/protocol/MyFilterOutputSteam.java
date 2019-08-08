@@ -1,4 +1,4 @@
-package com.gaga.protocol;
+package com.gaga.redis.protocol;
 
 import java.io.FilterOutputStream;
 import java.io.IOException;

@@ -1,4 +1,4 @@
-package com.gaga.command;
+package com.gaga.redis.command;
 
 import java.util.List;
 

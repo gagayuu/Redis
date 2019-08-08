@@ -1,6 +1,7 @@
-package com.gaga.protocol;
+package com.gaga.redis.protocol;
 
-import com.gaga.exception.MyException;
+
+import com.gaga.redis.exception.MyException;
 
 import java.io.FilterInputStream;
 import java.io.IOException;

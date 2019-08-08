@@ -1,4 +1,4 @@
-package com.gaga.DB;
+package com.gaga.redis.DB;
 
 import java.util.*;
 
