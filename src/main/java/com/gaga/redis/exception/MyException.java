@@ -1,5 +1,9 @@
 package com.gaga.redis.exception;
 
+/**
+ * 一个所有异常的基类：
+ *
+ */
 public class MyException extends Exception {
     public MyException() {
     }

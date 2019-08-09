@@ -8,9 +8,11 @@ import java.util.List;
 public class CommandFactory {
 
     public static Command build(String commandName) throws MyException, IllegalAccessException, InstantiationException {
-        String fullClassName = "com.gaga.command." + commandName.toUpperCase() + "Command";
+        //找到对应的的类名
+        String fullClassName = "com.gaga.redis.command." + commandName.toUpperCase() + "Command";
 
         try {
+            //反射得到对象
             Class<?> cls = Class.forName(fullClassName);
             if (!Command.class.isAssignableFrom(cls)) {
                 throw new MyException("不是合法命令");
@@ -22,9 +24,10 @@ public class CommandFactory {
     }
 
     public static Command build(List<Object> args) throws MyException, InstantiationException, IllegalAccessException {
-        if (args.size() == 0) {
-            throw new MyException("长度不能为0");
+        if (args.size() < 1) {
+            throw new MyException("长度不能 < 1");
         }
+
 
         Object obj = args.remove(0);
         if (!(obj instanceof byte[])) {

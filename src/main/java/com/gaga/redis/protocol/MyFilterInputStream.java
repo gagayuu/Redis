@@ -7,6 +7,9 @@ import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+/**
+ * 过滤输入流
+ */
 public class MyFilterInputStream extends FilterInputStream {
 
     /**
@@ -18,7 +21,7 @@ public class MyFilterInputStream extends FilterInputStream {
      * @param in the underlying input stream, or <code>null</code> if
      *           this instance is to be created without an underlying stream.
      */
-    protected MyFilterInputStream(InputStream in) {
+    public MyFilterInputStream(InputStream in) {
         super(in);
     }
 

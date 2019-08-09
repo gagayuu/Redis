@@ -6,6 +6,7 @@ import com.gaga.redis.exception.MyException;
 import com.gaga.redis.exception.RemoteException;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +15,7 @@ import static com.gaga.redis.protocol.MyFilterInputStream.readInteger;
 import static com.gaga.redis.protocol.MyFilterInputStream.readLine;
 
 
-//协议解析
+//协议编解码
 public class Protocol {
 
     public static Charset charset() {
@@ -25,10 +26,10 @@ public class Protocol {
         return readProcess(is);
     }
 
-    public static Command readCommand(MyFilterInputStream is) throws MyException, InstantiationException, IllegalAccessException {
-        Object o = read(is);
+    public static Command readCommand(InputStream is) throws MyException, InstantiationException, IllegalAccessException {
+        Object o = read(new MyFilterInputStream(is));
 
-        return CommandFactory.build((List<Object>)o);
+        return CommandFactory.build((List<Object>) o);
     }
 
 
@@ -81,7 +82,7 @@ public class Protocol {
     }
 
     public static Object readProcess(MyFilterInputStream is) throws MyException {
-        int start = 0;
+        int start;
         try {
             start = is.read();
         } catch (IOException e) {
@@ -104,7 +105,7 @@ public class Protocol {
     }
 
 
-    public static void writeString(MyFilterOutputSteam out,String str){
+    public static void writeString(MyFilterOutputSteam out, String str) {
         try {
             out.write('+');
             out.write(str.getBytes(charset()));
@@ -114,7 +115,7 @@ public class Protocol {
         }
     }
 
-    public static void writeError(MyFilterOutputSteam out, String err){
+    public static void writeError(MyFilterOutputSteam out, String err) {
         try {
             out.write('-');
             out.write(err.getBytes(charset()));
@@ -124,7 +125,7 @@ public class Protocol {
         }
     }
 
-    public static void writeIntegers(MyFilterOutputSteam out, long value){
+    public static void writeIntegers(MyFilterOutputSteam out, long value) {
         try {
             out.write(':');
             out.writeInteger(value);
@@ -137,7 +138,7 @@ public class Protocol {
     //    public static void writeBulkString(MyFilterOutputSteam out,String str){
 //        writeBulkString(out,str.getBytes(charset()));
 //    }
-    public static void writeBulkString(MyFilterOutputSteam out,byte[] bytes){
+    public static void writeBulkString(MyFilterOutputSteam out, byte[] bytes) {
         try {
             out.write('$');
             out.writeInteger(bytes.length);
@@ -149,12 +150,12 @@ public class Protocol {
         }
     }
 
-    public static void writeArray(MyFilterOutputSteam out,List<?> list){
+    public static void writeArray(MyFilterOutputSteam out, List<?> list) {
         try {
             out.write('*');
             out.writeInteger(list.size());
             out.writeCRLF();
-            for(Object o:list){
+            for (Object o : list) {
 
             }
         } catch (IOException e) {
@@ -162,7 +163,7 @@ public class Protocol {
         }
     }
 
-    public static void writeNull(MyFilterOutputSteam out){
+    public static void writeNull(MyFilterOutputSteam out) {
         try {
             out.write('$');
             out.writeInteger(-1);
@@ -172,22 +173,22 @@ public class Protocol {
         }
     }
 
-    public static void writeObject(MyFilterOutputSteam out,Object o) throws MyException {
-        if(o instanceof String){
-            writeString(out,(String)o);
-        }else if(o instanceof RemoteException){
-            writeError(out,((RemoteException) o).getMessage());
-        }else if(o instanceof Integer){
-            writeIntegers(out,((Integer) o).longValue());
-        }else if(o instanceof Long){
-            writeIntegers(out,(Long) o);
-        }else if(o instanceof byte[]){
-            writeBulkString(out,(byte[]) o);
-        }else if(o instanceof List){
-            writeArray(out,(List<?>) o);
-        }else if(o == null){
+    public static void writeObject(MyFilterOutputSteam out, Object o) throws MyException {
+        if (o instanceof String) {
+            writeString(out, (String) o);
+        } else if (o instanceof RemoteException) {
+            writeError(out, ((RemoteException) o).getMessage());
+        } else if (o instanceof Integer) {
+            writeIntegers(out, ((Integer) o).longValue());
+        } else if (o instanceof Long) {
+            writeIntegers(out, (Long) o);
+        } else if (o instanceof byte[]) {
+            writeBulkString(out, (byte[]) o);
+        } else if (o instanceof List) {
+            writeArray(out, (List<?>) o);
+        } else if (o == null) {
             writeNull(out);
-        }else{
+        } else {
             throw new MyException("写入了不识别的数据类型");
         }
     }

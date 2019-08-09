@@ -1,7 +1,8 @@
 package com.gaga.redis.exception;
 
-
-
+/**
+ *
+ */
 public class RemoteException extends MyException {
     public RemoteException() {
     }

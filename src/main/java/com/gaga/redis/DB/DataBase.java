@@ -2,6 +2,9 @@ package com.gaga.redis.DB;
 
 import java.util.*;
 
+/**
+ * 真正管理数据存储
+ */
 public class DataBase {
     private static DataBase instance=new DataBase();
 
@@ -31,4 +34,12 @@ public class DataBase {
         return list;
     }
 
+    public Map<String,String> getHashes(String key){
+        Map<String,String> map=hashes.get(key);
+        if(map==null){
+            map=new HashMap<>();
+            hashes.put(key,map);
+        }
+        return map;
+    }
 }
