@@ -3,8 +3,6 @@ package com.gaga.redis.command;
 import com.gaga.redis.DB.DataBase;
 import com.gaga.redis.protocol.MyFilterOutputSteam;
 import com.gaga.redis.protocol.Protocol;
-import org.omg.PortableInterceptor.INACTIVE;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;

@@ -156,9 +156,9 @@ public class Protocol {
             out.writeInteger(list.size());
             out.writeCRLF();
             for (Object o : list) {
-
+                writeObject(out,o);
             }
-        } catch (IOException e) {
+        } catch (IOException | MyException e) {
             e.printStackTrace();
         }
     }

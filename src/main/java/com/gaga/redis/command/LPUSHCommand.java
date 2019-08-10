@@ -26,5 +26,6 @@ public class LPUSHCommand implements Command{
         }
         System.out.println("list元素个数" +list.size());
         Protocol.writeIntegers(new MyFilterOutputSteam(outputStream),list.size());
+
     }
 }
